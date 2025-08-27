@@ -1,0 +1,48 @@
+.ant-radio-group {
+  .ant-radio-button-wrapper-checked {
+    background-color: #ebf2fd !important;
+  }
+}
+
+.ant-pagination {
+  .ant-pagination-item-active {
+    background-color: #ebf2fd !important;
+  }
+}
+
+.workbook-table {
+  min-width: 640px !important;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  .ant-table-thead > tr > th {
+    font-weight: bolder;
+    color: #999999;
+    background-color: #ffffff;
+  }
+
+  .ant-table-thead > tr > th::before,
+  .ant-table-thead > tr > td::before {
+    content: none !important;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 12px 8px;
+  }
+
+  .ant-table-tbody > tr > td:hover {
+    background-color: #fafafa !important;
+  }
+
+  .ant-empty-description {
+    color: #9dabc2;
+    font-weight: 500;
+    font-size: 15px;
+  }
+}
+
+.workbook-filter-select {
+  .ant-select-selector {
+    background-color: #fafafa !important;
+  }
+}
