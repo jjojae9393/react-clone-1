@@ -336,42 +336,40 @@ const WorkbookSection = () => {
                 let init = 0;
 
                 return (
-                    <>
-                        <Flex vertical align={"center"}>
-                            {
-                                record.student.length === 0 &&
-                                <WorkbookTableRowButton
-                                    color="primary"
-                                    ghost={true}
-                                    variant="outlined"
-                                >
-                                    추가
-                                </WorkbookTableRowButton>
-                            }
-                            {
-                                (record.student.length > 0 && record.student.length < 3) &&
-                                <>
-                                    {
-                                        record.student.map((e) => {
-                                            init += 1;
-                                            return (
-                                                <span>
+                    <Flex vertical align={"center"}>
+                        {
+                            record.student.length === 0 &&
+                            <WorkbookTableRowButton
+                                color="primary"
+                                ghost={true}
+                                variant="outlined"
+                            >
+                                추가
+                            </WorkbookTableRowButton>
+                        }
+                        {
+                            (record.student.length > 0 && record.student.length < 3) &&
+                            <>
+                                {
+                                    record.student.map((e) => {
+                                        init += 1;
+                                        return (
+                                            <span>
                                                     {e}{(init == 1 && record.student.length == 2) && <>,</>}
                                                 </span>
-                                            )
-                                        })
-                                    }
-                                </>
-                            }
-                            {
-                                record.student.length >= 3 &&
-                                <>
-                                    <span>{record.student[0]}</span>
-                                    <span>외 {record.student.length - 1}명</span>
-                                </>
-                            }
-                        </Flex>
-                    </>
+                                        )
+                                    })
+                                }
+                            </>
+                        }
+                        {
+                            record.student.length >= 3 &&
+                            <>
+                                <span>{record.student[0]}</span>
+                                <span>외 {record.student.length - 1}명</span>
+                            </>
+                        }
+                    </Flex>
                 )
             }
         },
@@ -436,33 +434,31 @@ const WorkbookSection = () => {
                 const openPopover = activeTableRowModalId === record.id;
 
                 return (
-                    <>
-                        <Popover
-                            open={openPopover}
-                            onOpenChange={(e) => setActiveTableRowModalId(e ? record.id : null)}
-                            trigger="click"
-                            placement="leftTop"
-                            arrow={false}
-                            content={
-                                <Flex vertical>
-                                    <WorkbookTableRowModalGroup vertical gap={8}>
-                                        <span>다시 제출하기</span>
-                                        <Button type={"text"} icon={"+1"}>다음 회차 출제</Button>
-                                        <Button type={"text"} icon={<CopyOutlined/>}>그대로 복사 후 출제</Button>
-                                        <Button type={"text"} icon={<SyncOutlined/>}>문항 편집 후 출제</Button>
-                                        <div style={{background: "#d9d9d9", width: "auto", height: "1px"}}></div>
-                                        <Button type={"text"} icon={<SettingOutlined/>}>정보수정</Button>
-                                        <Button type={"text"} icon={<DesktopOutlined/>}>강의모드</Button>
-                                        <Button type={"text"} icon={<DeleteOutlined/>}>삭제하기</Button>
-                                    </WorkbookTableRowModalGroup>
-                                </Flex>
-                            }
-                        >
-                            <Button type="text" onClick={() => setActiveTableRowModalId(record.id)}>
-                                <MoreOutlined style={{fontSize: '20px'}}/>
-                            </Button>
-                        </Popover>
-                    </>
+                    <Popover
+                        open={openPopover}
+                        onOpenChange={(e) => setActiveTableRowModalId(e ? record.id : null)}
+                        trigger="click"
+                        placement="leftTop"
+                        arrow={false}
+                        content={
+                            <Flex vertical>
+                                <WorkbookTableRowModalGroup vertical gap={8}>
+                                    <span>다시 제출하기</span>
+                                    <Button type={"text"} icon={"+1"}>다음 회차 출제</Button>
+                                    <Button type={"text"} icon={<CopyOutlined/>}>그대로 복사 후 출제</Button>
+                                    <Button type={"text"} icon={<SyncOutlined/>}>문항 편집 후 출제</Button>
+                                    <div style={{background: "#d9d9d9", width: "auto", height: "1px"}}></div>
+                                    <Button type={"text"} icon={<SettingOutlined/>}>정보수정</Button>
+                                    <Button type={"text"} icon={<DesktopOutlined/>}>강의모드</Button>
+                                    <Button type={"text"} icon={<DeleteOutlined/>}>삭제하기</Button>
+                                </WorkbookTableRowModalGroup>
+                            </Flex>
+                        }
+                    >
+                        <Button type="text" onClick={() => setActiveTableRowModalId(record.id)}>
+                            <MoreOutlined style={{fontSize: '20px'}}/>
+                        </Button>
+                    </Popover>
                 )
             }
         },
