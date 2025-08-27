@@ -6,7 +6,7 @@ import {
     Empty,
     Flex,
     Input,
-    Popover, Progress,
+    Popover,
     Radio,
     Select,
     Space,
@@ -16,10 +16,13 @@ import {
     Tooltip,
 } from "antd";
 import {
-    CalendarOutlined, CopyOutlined, DeleteOutlined,
+    CalendarOutlined,
+    CopyOutlined,
+    DeleteOutlined,
     DesktopOutlined,
     DownOutlined,
-    MoreOutlined, SettingOutlined,
+    MoreOutlined,
+    SettingOutlined,
     SyncOutlined,
     UnorderedListOutlined,
 } from "@ant-design/icons";
@@ -221,24 +224,22 @@ const WorkbookSection = () => {
             title: "학습지명", dataIndex: "workbook",
             render: (_, record) => {
                 const tagColor =
-                    (record.workbook.type == '시중' && "#ed669b")
-                    || (record.workbook.type == '교과' && "#725fec")
+                    (record.workbook.type === '시중' && "#ed669b")
+                    || (record.workbook.type === '교과' && "#725fec")
                     || "#b1e266";
 
                 return (
-                    <>
-                        <Flex vertical gap={6}>
-                            <WorkbookTableRowTitle>
-                                <Tag color={tagColor}>
-                                    {record.workbook.type}
-                                </Tag>
-                                <div>{record.workbook.title}</div>
-                            </WorkbookTableRowTitle>
-                            <WorkbookTableRowSubTitle>
-                                {record.workbook.question}문항 | {record.workbook.createdAt} | {record.workbook.writer}
-                            </WorkbookTableRowSubTitle>
-                        </Flex>
-                    </>
+                    <Flex vertical gap={6}>
+                        <WorkbookTableRowTitle>
+                            <Tag color={tagColor}>
+                                {record.workbook.type}
+                            </Tag>
+                            <div>{record.workbook.title}</div>
+                        </WorkbookTableRowTitle>
+                        <WorkbookTableRowSubTitle>
+                            {record.workbook.question}문항 | {record.workbook.createdAt} | {record.workbook.writer}
+                        </WorkbookTableRowSubTitle>
+                    </Flex>
                 )
             }
         },
@@ -246,12 +247,10 @@ const WorkbookSection = () => {
             title: "과정", dataIndex: "course", align: "center",
             render: (_, record) => {
                 return (
-                    <>
-                        <Flex vertical align={"center"}>
-                            <span>{record.course.name}</span>
-                            {record.course.etc && <span>({record.course.etc})</span>}
-                        </Flex>
-                    </>
+                    <Flex vertical align={"center"}>
+                        <span>{record.course.name}</span>
+                        {record.course.etc && <span>({record.course.etc})</span>}
+                    </Flex>
                 )
             }
         },
@@ -315,21 +314,19 @@ const WorkbookSection = () => {
             title: "제출기간", dataIndex: "date", align: "center",
             render: (_, record) => {
                 return (
-                    <>
-                        <Flex vertical align={"center"}>
-                            {
-                                (record.date.start && record.date.end) &&
-                                <>
-                                    <span>{record.date.start}</span>
-                                    <span>~&nbsp;{record.date.end}</span>
-                                </>
-                            }
-                            {
-                                !(record.date.start && record.date.end) &&
-                                <span>기한없음</span>
-                            }
-                        </Flex>
-                    </>
+                    <Flex vertical align={"center"}>
+                        {
+                            (record.date.start && record.date.end) &&
+                            <>
+                                <span>{record.date.start}</span>
+                                <span>~&nbsp;{record.date.end}</span>
+                            </>
+                        }
+                        {
+                            !(record.date.start && record.date.end) &&
+                            <span>기한없음</span>
+                        }
+                    </Flex>
                 )
             }
         },
