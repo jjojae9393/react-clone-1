@@ -10,7 +10,7 @@ const items: TabsProps["items"] = [
     {key: "workbook-before", label: "내 학습지(이전)"},
     {key: "private-homework", label: "개인과제"},
     {key: "marked-textbook", label: "스스로채점 학습(이전)"},
-];
+] satisfies { key: string; label: string; } [];
 
 const WorkbookPage = () => {
     const [activeKey, setActiveKey] = useState<string>("workbook");

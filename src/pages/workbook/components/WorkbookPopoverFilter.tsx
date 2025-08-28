@@ -3,13 +3,7 @@ import {CloseOutlined, RedoOutlined} from "@ant-design/icons";
 import TuneIcon from "../../../common/components/icon/Tune";
 import React from "react";
 import styled from "styled-components";
-
-type WorkbookPopoverFilterProps = {
-    open: boolean;
-    onOpen: () => void;
-    onClose: () => void;
-    onInputInit: () => void;
-}
+import {WorkbookPopoverFilterProps} from "../types";
 
 const WorkbookPopoverFilter = (props: WorkbookPopoverFilterProps) => {
     return (
