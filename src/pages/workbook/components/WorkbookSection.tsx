@@ -30,10 +30,9 @@ import React, {useCallback, useMemo, useState} from "react";
 import setupDayjs from "../../../common/utils/SetupDayjs";
 import PaginationV1 from "../../../common/components/Pagination";
 import WorkbookAddButton from "./WorkbookAddButton";
-import WorkbookFilterModal from "./WorkbookFilterModal";
-import TuneIcon from "../../../common/components/icon/Tune";
 import {ButtonColorType} from "antd/lib/button";
 import MultiProgress from "react-multi-progress";
+import WorkbookPopoverFilter from "./WorkbookPopoverFilter";
 
 type WorkbookValidateSearchMonth = { type: 'start' | 'end'; value: string | string[]; };
 type SearchOption = { value: string; label: string };
@@ -207,9 +206,10 @@ const WorkbookSection = () => {
     );
 
     // Filter - Modal Layer
-    const [activeFilterModal, setActiveFilterModal] = useState<boolean>(false);
-    const [activeTableRowModalId, setActiveTableRowModalId] = useState<number | null>(null);
+    const [activePopoverFilter, setActivePopoverFilter] = useState<boolean>(false);
     const [activeCourseIds, setActiveCourseIds] = useState([]);
+
+    const [activeTableRowModalId, setActiveTableRowModalId] = useState<number | null>(null);
 
     // Search Callback
     const validateSearchMonth = useCallback(({type, value}: WorkbookValidateSearchMonth) => {
@@ -506,21 +506,12 @@ const WorkbookSection = () => {
                             }}
                         />
                     </Tooltip>
-                    <Button
-                        icon={<TuneIcon/>}
-                        iconPosition={"end"}
-                        onClick={() => setActiveFilterModal(true)}>
-                        필터 선택
-                    </Button>
-                    <WorkbookFilterModal
-                        open={activeFilterModal}
-                        value={[]}
-                        filters={[]}
-                        onInit={() => setActiveCourseIds([])}
-                        onClose={() => {
-                            setActiveFilterModal(false);
-                        }}
-                    ></WorkbookFilterModal>
+                    <WorkbookPopoverFilter
+                        open={activePopoverFilter}
+                        onOpen={() => setActivePopoverFilter(true)}
+                        onClose={() => setActivePopoverFilter(false)}
+                        onInputInit={() => setActiveCourseIds([])}
+                    />
                 </Space>
                 <Space style={{flexWrap: "nowrap", whiteSpace: "nowrap"}}>
                     <Dropdown
