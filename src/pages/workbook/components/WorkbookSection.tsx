@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import {Button, DatePicker, Dropdown, Flex, Input, Radio, Select, Space, Tag, Tooltip,} from "antd";
-import {CalendarOutlined, DownOutlined, UnorderedListOutlined,} from "@ant-design/icons";
+import {Button, DatePicker, Dropdown, Flex, Input, Radio, Select, Space, Tooltip,} from "antd";
+import {CalendarOutlined, CloseOutlined, DownOutlined, RedoOutlined, UnorderedListOutlined,} from "@ant-design/icons";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import setupDayjs from "../../../common/utils/SetupDayjs";
 import {WorkbookTableRow} from "../types";
 import WorkbookTable from "./WorkbookTable";
 import WorkbookPopoverFilter from "./WorkbookPopoverFilter";
+import {WorkbookCourse} from "../types/WorkbookFilter";
 
 type WorkbookValidateSearchMonth = { type: 'start' | 'end'; value: string | string[]; };
 
@@ -19,6 +20,9 @@ const stateOptions = [
     {label: "삭제된", key: "deleted"},
 ] satisfies { label: string; key: string; }[];
 
+
+// const WorkbookSearchBar = React.memo(() => (),(prev,next) => prev)
+
 const WorkbookSection = () => {
     const [rows, setRows] = useState<WorkbookTableRow[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
@@ -26,6 +30,8 @@ const WorkbookSection = () => {
 
     // Filter - Search Layer
     const [selectedSearchLabel, setSearchLabel] = useState<string>("제목");
+    const [activeSearchValue, setSearchValue] = useState<string | null>(null);
+
     const [selectedSearchStartMonth, setSearchStartMonth] = useState(() => {
         const before = setupDayjs().add(-3, "month");
 
@@ -48,7 +54,11 @@ const WorkbookSection = () => {
 
     // Filter - Modal Layer
     const [activePopoverFilter, setActivePopoverFilter] = useState<boolean>(false);
-    const [activeCourseIds, setActiveCourseIds] = useState([]);
+    const [activeCourses, setActiveCourses] = useState<WorkbookCourse[]>([]);
+    const [courses, setCourses] = useState<WorkbookCourse[]>([]);
+
+    console.log(courses);
+    console.log(activeCourses);
 
     // Search Callback
     const validateSearchMonth = useCallback(({type, value}: WorkbookValidateSearchMonth) => {
@@ -56,6 +66,33 @@ const WorkbookSection = () => {
         // 시작날짜가 종료날짜보다 앞서지말아야함.
         // 시작날짜와 종료날짜 사이의 간격은 최대 6개월.
     }, [selectedSearchStartMonth, selectedSearchEndMonth]);
+
+    const handleCheckCourse = useCallback((changeCourses: WorkbookCourse[]) => {
+        setCourses(prev => {
+            const next = prev.map((course) => {
+                for (let i = 0; i < changeCourses.length; i++) {
+                    if (course.id === changeCourses[i].id) {
+                        return {...course, isChecked: changeCourses[i].isChecked};
+                    }
+                }
+
+                return course;
+            });
+
+            return next;
+        });
+    }, []);
+
+    const handleInitCheckCourse = useCallback(() => {
+        setCourses(prev => {
+            return prev.map((course) => {
+                if (course.isChecked) return {...course, isChecked: false}
+
+                return course;
+            });
+        })
+        setActiveCourses([]);
+    }, []);
 
     useEffect(() => {
         const id = setTimeout(() => {
@@ -155,25 +192,52 @@ const WorkbookSection = () => {
                 },
             ];
 
+            const receivedWorkbookCourses: WorkbookCourse[] = [
+                {type: "type", id: 1, title: "시중교재", isChecked: false},
+                {type: "type", id: 2, title: "교과서", isChecked: false},
+                {type: "type", id: 3, title: "매쓰홀릭", isChecked: false},
+                {type: "type", id: 4, title: "모의고사 기출", isChecked: false},
+                {type: "elementary", id: 5, title: "초등 3-1(2022 개정)", isChecked: false},
+                {type: "elementary", id: 6, title: "초등 3-2(2022 개정)", isChecked: false},
+                {type: "elementary", id: 7, title: "초등 4-1(2022 개정)", isChecked: false},
+                {type: "elementary", id: 8, title: "초등 4-2(2022 개정)", isChecked: false},
+                {type: "middle", id: 9, title: "중등 1-1(2022 개정)", isChecked: false},
+                {type: "middle", id: 10, title: "중등 1-2(2022 개정)", isChecked: false},
+                {type: "middle", id: 11, title: "중등 2-1(2022 개정)", isChecked: false},
+                {type: "middle", id: 12, title: "중등 2-2(2022 개정)", isChecked: false},
+                {type: "high", id: 13, title: "공통수학1(2022 개정)", isChecked: false},
+                {type: "high", id: 14, title: "공통수학2(2022 개정)", isChecked: false},
+                {type: "high", id: 15, title: "미적분1(2022 개정)", isChecked: false},
+            ];
+
             setRows(newRows);
             setTotalCount(newRows.length);
+            setCourses(receivedWorkbookCourses);
         }, 1500);
 
         return () => clearTimeout(id);
-    }, [rows])
+    }, [])
+
+    useEffect(() => {
+        setActiveCourses(courses.filter(e => e.isChecked));
+    }, [courses]);
 
     return (
         <Flex gap={16} vertical>
-            <WorkbookFilters>
+            <WorkbookSearch>
                 <Space style={{flexWrap: "nowrap", whiteSpace: "nowrap"}}>
                     <Space.Compact style={{maxWidth: "200px"}}>
-                        <Select
-                            className={"workbook-filter-select"}
-                            defaultValue={selectedSearchLabel}
-                            options={searchOptions}
-                            onChange={(e) => setSearchLabel(e)}
+                        <SelectWrapper>
+                            <Select
+                                options={searchOptions}
+                                defaultValue={selectedSearchLabel}
+                                onChange={(e) => setSearchLabel(e)}
+                            />
+                        </SelectWrapper>
+                        <Input
+                            onChange={(prev) => setSearchValue(prev.target.value)}
+                            placeholder={"검색"}
                         />
-                        <Input placeholder={"검색"}/>
                     </Space.Compact>
                     <Tooltip
                         placement="top"
@@ -184,7 +248,7 @@ const WorkbookSection = () => {
                                 <span>검색범위는 최대 6개월입니다.</span>
                             </Flex>
                         }>
-                        <WorkbookDatePickerIncFilters
+                        <WorkbookDatePicker
                             picker="month"
                             format="YYYY.MM"
                             allowClear={false}
@@ -194,7 +258,7 @@ const WorkbookSection = () => {
                             }}
                         />
                         &nbsp;~&nbsp;
-                        <WorkbookDatePickerIncFilters
+                        <WorkbookDatePicker
                             picker="month"
                             format="YYYY.MM"
                             allowClear={false}
@@ -206,9 +270,11 @@ const WorkbookSection = () => {
                     </Tooltip>
                     <WorkbookPopoverFilter
                         open={activePopoverFilter}
+                        rows={courses}
                         onOpen={() => setActivePopoverFilter(true)}
                         onClose={() => setActivePopoverFilter(false)}
-                        onInputInit={() => setActiveCourseIds([])}
+                        onChange={handleCheckCourse}
+                        onInputInit={handleInitCheckCourse}
                     />
                 </Space>
                 <Space style={{flexWrap: "nowrap", whiteSpace: "nowrap"}}>
@@ -240,33 +306,31 @@ const WorkbookSection = () => {
                         </Radio.Button>
                     </Radio.Group>
                 </Space>
-            </WorkbookFilters>
+            </WorkbookSearch>
             {
-                // activeCourseIds.length > 0 &&
-                true &&
+                activeCourses.length > 0 &&
                 (
-                    <Flex gap={3} wrap={true}>
-                        <Tag color="processing" closable={true}>테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
-                        <Tag color="processing">테스트 1</Tag>
+                    <Flex gap={10} wrap={true}>
+                        {
+                            activeCourses.map((value, index) => {
+                                return (
+                                    <WorkbookFilterTag onClick={() => true}>
+                                        {value.title}<CloseOutlined/>
+                                    </WorkbookFilterTag>
+                                )
+                            })
+                        }
+                        <WorkbookFilterInitTag
+                            onClick={() => setActiveCourses([])}><RedoOutlined/>초기화
+                        </WorkbookFilterInitTag>
                     </Flex>
                 )
             }
             <WorkbookTable
                 dataSource={rows}
-                currentPage={activePage}
                 totalCount={totalCount}
+                currentPage={activePage}
+                onClickPage={(page: number) => setActivePage(page)}
             />
         </Flex>
     );
@@ -274,12 +338,46 @@ const WorkbookSection = () => {
 
 export default WorkbookSection;
 
-const WorkbookFilters = styled(Flex)`
+const SelectWrapper = styled.div`
+    && .ant-select-selector {
+        background: #fafafa;
+    }
+`;
+
+const WorkbookSearch = styled(Flex)`
     align-items: flex-start;
     justify-content: space-between;
 `;
 
-const WorkbookDatePickerIncFilters = styled(DatePicker)`
+const WorkbookDatePicker = styled(DatePicker)`
     max-width: 100px;
     min-width: 100px;
+`;
+
+const WorkbookFilterTag = styled.div`
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 5px;
+    height: 28px;
+    padding: 5px 10px;
+    cursor: pointer;
+    box-sizing: border-box;
+    border-radius: 14px;
+    border: 1px solid #1677ff;
+    background: #e5f2fd;
+    color: #1677ff;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: normal;
+`;
+
+const WorkbookFilterInitTag = styled(WorkbookFilterTag)`
+    border: none;
+    background: none;
+
+    &:hover {
+        background: #f1f3f5;
+    }
 `;

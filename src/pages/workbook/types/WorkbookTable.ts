@@ -34,4 +34,5 @@ export type WorkbookTableProps = {
     dataSource: WorkbookTableRow[];
     totalCount: number;
     currentPage: number;
+    onClickPage: (page: number) => void;
 };

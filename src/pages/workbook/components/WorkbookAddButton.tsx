@@ -1,7 +1,8 @@
 import {Button} from "antd";
 import {useNavigate} from "react-router";
+import React from "react";
 
-const WorkbookAddButton = () => {
+const WorkbookAddButton = React.memo(() => {
     const navigate = useNavigate();
 
     return (
@@ -15,6 +16,6 @@ const WorkbookAddButton = () => {
             +&nbsp;&nbsp;새 학습지 만들기
         </Button>
     )
-}
+})
 
 export default WorkbookAddButton;

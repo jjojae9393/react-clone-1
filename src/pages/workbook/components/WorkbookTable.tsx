@@ -15,6 +15,7 @@ import MultiProgress from "react-multi-progress";
 import {WorkbookTableProps, WorkbookTableRow} from "../types";
 
 const MAX_VISIBLE_STUDENTS = 3;
+const TABLE_ROW_SIZE = 10;
 
 const WorkbookTableColumnEtc2Popover = memo(
     ({id, open, onOpenChange}: {
@@ -310,8 +311,10 @@ const WorkbookTable = (props: WorkbookTableProps) => {
                 props.totalCount > 0 &&
                 <Pagination
                     align="center"
+                    defaultPageSize={TABLE_ROW_SIZE}
                     defaultCurrent={props.currentPage}
                     total={props.totalCount}
+                    onChange={(_, record) => props.onClickPage(record)}
                 />
             }
         </>
