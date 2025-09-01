@@ -1,34 +1,52 @@
 import {Button, Checkbox, CheckboxChangeEvent, Flex, Popover} from "antd";
 import {CloseOutlined, RedoOutlined} from "@ant-design/icons";
 import TuneIcon from "../../../common/components/icon/Tune";
-import React from "react";
+import React, {useMemo} from "react";
 import styled from "styled-components";
 import {WorkbookPopoverFilterProps} from "../types";
 import {WorkbookCourse, WorkbookCourseType} from "../types/WorkbookFilter";
 
 const WorkbookPopoverFilter = (props: WorkbookPopoverFilterProps) => {
-    const [checkTypeElementary, setCheckTypeElementary] = React.useState(false);
-    const [checkTypeMiddle, setCheckTypeMiddle] = React.useState(false);
-    const [checkTypeHigh, setCheckTypeHigh] = React.useState(false);
-
-    const handleCheckAll = (type: WorkbookCourseType, event: CheckboxChangeEvent) => {
-        switch (type) {
-            case "elementary":
-                setCheckTypeElementary(event.target.checked);
-                break;
-            case "middle":
-                setCheckTypeMiddle(event.target.checked);
-                break;
-            case "high":
-                setCheckTypeHigh(event.target.checked);
-                break;
+    // 재렌더링되지 않아야하는 연산값들은 항상 memo로 처리.
+    // 상태관리를 useMemo 하나에서 전체를 관리
+    const filterStats = useMemo(() => {
+        const group = {
+            type: props.rows.filter(e => e.type === 'type'),
+            elementary: props.rows.filter(e => e.type === 'elementary'),
+            middle: props.rows.filter(e => e.type === 'middle'),
+            high: props.rows.filter(e => e.type === 'high'),
         }
 
+        console.log("init course ??");
+
+        return {
+            elementary: {
+                total: group.elementary.length,
+                isAllChecked: group.elementary.length > 0
+                    && group.elementary.every(e => e.isChecked)
+            },
+            middle: {
+                total: group.middle.length,
+                isAllChecked: group.middle.length > 0
+                    && group.middle.every(e => e.isChecked)
+            },
+            high: {
+                total: group.high.length,
+                isAllChecked: group.high.length > 0
+                    && group.high.every(e => e.isChecked)
+            },
+        }
+    }, [props.rows])
+
+    const handleCheckAll = (type: WorkbookCourseType, event: CheckboxChangeEvent) => {
         props.onChange(
             props.rows
-                .filter(e => e.type === type)
                 .map(e => {
-                    return {...e, isChecked: event.target.checked};
+                    if (e.type === type) {
+                        return {...e, isChecked: event.target.checked};
+                    } else {
+                        return e;
+                    }
                 })
         );
     }
@@ -36,9 +54,12 @@ const WorkbookPopoverFilter = (props: WorkbookPopoverFilterProps) => {
     const handleCheck = (item: WorkbookCourse) => {
         props.onChange(
             props.rows
-                .filter(e => e.id === item.id)
                 .map(e => {
-                    return {...e, isChecked: item.isChecked ? false : true};
+                    if (e.id === item.id) {
+                        return {...e, isChecked: !item.isChecked};
+                    } else {
+                        return e;
+                    }
                 })
         );
     }
@@ -106,7 +127,7 @@ const WorkbookPopoverFilter = (props: WorkbookPopoverFilterProps) => {
                             <Flex vertical gap={8}>
                                 <Checkbox
                                     key={'elementary_checked_all'}
-                                    checked={checkTypeElementary}
+                                    checked={filterStats.elementary.isAllChecked}
                                     onChange={e => handleCheckAll('elementary', e)}
                                 >
                                     초등 전체
@@ -129,7 +150,7 @@ const WorkbookPopoverFilter = (props: WorkbookPopoverFilterProps) => {
                             <Flex vertical gap={8}>
                                 <Checkbox
                                     key={'middle_checked_all'}
-                                    checked={checkTypeMiddle}
+                                    checked={filterStats.middle.isAllChecked}
                                     onChange={e => handleCheckAll('middle', e)}
                                 >
                                     중등 전체
@@ -152,7 +173,7 @@ const WorkbookPopoverFilter = (props: WorkbookPopoverFilterProps) => {
                             <Flex vertical gap={8}>
                                 <Checkbox
                                     key={'high_checked_all'}
-                                    checked={checkTypeHigh}
+                                    checked={filterStats.high.isAllChecked}
                                     onChange={e => handleCheckAll('high', e)}
                                 >
                                     고등 전체

@@ -20,9 +20,6 @@ const stateOptions = [
     {label: "삭제된", key: "deleted"},
 ] satisfies { label: string; key: string; }[];
 
-
-// const WorkbookSearchBar = React.memo(() => (),(prev,next) => prev)
-
 const WorkbookSection = () => {
     const [rows, setRows] = useState<WorkbookTableRow[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
@@ -57,9 +54,6 @@ const WorkbookSection = () => {
     const [activeCourses, setActiveCourses] = useState<WorkbookCourse[]>([]);
     const [courses, setCourses] = useState<WorkbookCourse[]>([]);
 
-    console.log(courses);
-    console.log(activeCourses);
-
     // Search Callback
     const validateSearchMonth = useCallback(({type, value}: WorkbookValidateSearchMonth) => {
         if (!value) return;
@@ -69,7 +63,7 @@ const WorkbookSection = () => {
 
     const handleCheckCourse = useCallback((changeCourses: WorkbookCourse[]) => {
         setCourses(prev => {
-            const next = prev.map((course) => {
+            return prev.map((course) => {
                 for (let i = 0; i < changeCourses.length; i++) {
                     if (course.id === changeCourses[i].id) {
                         return {...course, isChecked: changeCourses[i].isChecked};
@@ -78,20 +72,16 @@ const WorkbookSection = () => {
 
                 return course;
             });
-
-            return next;
         });
     }, []);
 
     const handleInitCheckCourse = useCallback(() => {
-        setCourses(prev => {
-            return prev.map((course) => {
-                if (course.isChecked) return {...course, isChecked: false}
-
-                return course;
-            });
-        })
         setActiveCourses([]);
+        setCourses(
+            prev => prev.map((course) => {
+                return {...course, isChecked: false}
+            })
+        );
     }, []);
 
     useEffect(() => {
@@ -321,7 +311,7 @@ const WorkbookSection = () => {
                             })
                         }
                         <WorkbookFilterInitTag
-                            onClick={() => setActiveCourses([])}><RedoOutlined/>초기화
+                            onClick={handleInitCheckCourse}><RedoOutlined/>초기화
                         </WorkbookFilterInitTag>
                     </Flex>
                 )
